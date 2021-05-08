@@ -44,14 +44,22 @@ namespace FileManager
         }
         private void FillPic()
         {
+            
             ImageList imageList1 = new ImageList();
             Bitmap bmp = new Bitmap("Resources\\folder.ico");
             imageList1.Images.Add(bmp);
-            Bitmap bmp1 = new Bitmap("Resources\\file.ico");
+            Bitmap bmp1 = new Bitmap("Resources\\pdf.ico");
             imageList1.Images.Add(bmp1);
             Bitmap bmp2 = new Bitmap("Resources\\disk.ico");
             imageList1.Images.Add(bmp2);
+            Bitmap bmp3 = new Bitmap("Resources\\excel.ico");
+            imageList1.Images.Add(bmp3);
+            Bitmap bmp4 = new Bitmap("Resources\\word.ico");
+            imageList1.Images.Add(bmp4);
+            Bitmap bmp5 = new Bitmap("Resources\\image.ico");
+            imageList1.Images.Add(bmp5);
             FirstTree.ImageList = imageList1;
+            ScreenFile.LargeImageList = imageList1;
         }
 
         void treeView1_BeforeExpand(object sender, TreeViewCancelEventArgs e)
@@ -62,10 +70,7 @@ namespace FileManager
             {
                 if (Directory.Exists(e.Node.FullPath))
                 {
-                    if(!(e.Node.FullPath == "С:\\"))
-                    { 
-                        comboBox1.SelectedIndex = 0;
-                    }    
+                    comboBox1.SelectedIndex = 0;
                     dirs = Directory.GetDirectories(e.Node.FullPath);
                     if (dirs.Length != 0)
                     {
@@ -76,18 +81,42 @@ namespace FileManager
                             e.Node.Nodes.Add(dirNode);
                         }
                     }
-                    
-                    dirs = Directory.GetFiles(e.Node.FullPath);
-                    if (dirs.Length != 0)
+                    string[] files = Directory.GetFiles(e.Node.FullPath);
+                    ScreenFile.Items.Clear();
+                    // перебор полученных файлов
+                    foreach (string file in files)
                     {
-                        for (int i = 0; i < dirs.Length; i++)
+
+                        ListViewItem lvi = new ListViewItem();
+                        lvi.Text = file.Remove(0, file.LastIndexOf('\\') + 1);
+                        // установка названия файла
+                        string ext = Path.GetExtension(file);
+                        if (ext ==".pdf")
                         {
-                            TreeNode dirNode = new TreeNode(new DirectoryInfo(dirs[i]).Name);
-                            dirNode.ImageIndex = 1;
-                            FillTreeNode(dirNode, dirs[i]);
-                            e.Node.Nodes.Add(dirNode);
+                            lvi.ImageIndex = 1;
+                        } else if (ext == ".png" || ext ==".JPG" || ext == ".mp4" || ext== ".jpg")
+                        {
+                            lvi.ImageIndex = 5;
+                        } else if (ext == ".xls" || ext == ".csv" || ext == ".xlsx" )
+                        {
+                            lvi.ImageIndex = 3;
                         }
+
+                        // установка картинки для файла
+                        // добавляем элемент в ListView
+                        ScreenFile.Items.Add(lvi);
                     }
+                    //dirs = Directory.GetFiles(e.Node.FullPath);
+                    //if (dirs.Length != 0)
+                    //{
+                    //    for (int i = 0; i < dirs.Length; i++)
+                    //    {
+                    //        TreeNode dirNode = new TreeNode(new DirectoryInfo(dirs[i]).Name);
+                    //        dirNode.ImageIndex = 1;
+                    //        FillTreeNode(dirNode, dirs[i]);
+                    //        e.Node.Nodes.Add(dirNode);
+                    //    }
+                    //}
                     textBox1.Text = e.Node.FullPath;
                 }
             }
@@ -199,5 +228,6 @@ namespace FileManager
             PropertyOfFile pr = new PropertyOfFile(FirstTree.SelectedNode);
             pr.Show();
         }
+
     }
 }

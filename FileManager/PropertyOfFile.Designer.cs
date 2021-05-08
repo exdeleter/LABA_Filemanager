@@ -47,18 +47,18 @@ namespace FileManager
             this.TypeOfFile.AutoSize = true;
             this.TypeOfFile.Location = new System.Drawing.Point(23, 108);
             this.TypeOfFile.Name = "TypeOfFile";
-            this.TypeOfFile.Size = new System.Drawing.Size(46, 17);
+            this.TypeOfFile.Size = new System.Drawing.Size(138, 17);
             this.TypeOfFile.TabIndex = 1;
-            this.TypeOfFile.Text = "label1";
+            this.TypeOfFile.Text = "Расширение файла";
             // 
             // SizeOfFile
             // 
             this.SizeOfFile.AutoSize = true;
             this.SizeOfFile.Location = new System.Drawing.Point(23, 136);
             this.SizeOfFile.Name = "SizeOfFile";
-            this.SizeOfFile.Size = new System.Drawing.Size(46, 17);
+            this.SizeOfFile.Size = new System.Drawing.Size(108, 17);
             this.SizeOfFile.TabIndex = 2;
-            this.SizeOfFile.Text = "label1";
+            this.SizeOfFile.Text = "Размер файла ";
             // 
             // PropertyOfFile
             // 
