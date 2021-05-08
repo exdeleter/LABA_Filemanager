@@ -30,10 +30,10 @@ namespace FileManager
         public FileComm()
         {
             InitializeComponent();
-            Init();
+            Initialization();
             
         }
-        private void Init()
+        private void Initialization()
         {
             FillPic();
             //treeView1.BeforeSelect += treeView1_BeforeSelect;
@@ -58,11 +58,65 @@ namespace FileManager
             imageList1.Images.Add(bmp4);
             Bitmap bmp5 = new Bitmap("Resources\\image.ico");
             imageList1.Images.Add(bmp5);
+            Bitmap bmp6 = new Bitmap("Resources\\json.ico");
+            imageList1.Images.Add(bmp6);
+            Bitmap bmp7 = new Bitmap("Resources\\question.ico");
+            imageList1.Images.Add(bmp7);
+            imageList1.ImageSize = new Size(32, 32);
             FirstTree.ImageList = imageList1;
             ScreenFile.LargeImageList = imageList1;
         }
+        private void FillDriveNodes()
+        {
+            try
+            {
+                
+                foreach (DriveInfo drive in DriveInfo.GetDrives())
+                {
+                    TreeNode driveNode = new TreeNode { Text = drive.Name };
+                    driveNode.ImageIndex = 2;
+                    FillTreeNode(driveNode, drive.Name);
+                    
+                    FirstTree.Nodes.Add(driveNode);
+                }
+            }
+            catch (Exception ex) { }
+        }
+        private void FillComboBox()
+        {
+            foreach (DriveInfo drive in DriveInfo.GetDrives())
+            {
+                comboBox1.Items.Add(drive.Name);
 
-        void treeView1_BeforeExpand(object sender, TreeViewCancelEventArgs e)
+            }
+        }
+        private void FillTreeNode(TreeNode driveNode, string path)
+        {
+            try
+            {
+                
+                string[] dirs = Directory.GetDirectories(path);
+                foreach (string dir in dirs)
+                {
+                    TreeNode dirNode = new TreeNode();
+                    dirNode.Text = dir.Remove(0, dir.LastIndexOf("\\") + 1);
+                    dirNode.ImageIndex = 0;
+                    driveNode.Nodes.Add(dirNode);
+                }
+                string[] files = Directory.GetFiles(path);
+                foreach (string fl in files)
+                {
+                    TreeNode dirNode = new TreeNode();
+                    dirNode.Text = fl.Remove(0, fl.LastIndexOf("\\") + 1);
+                    dirNode.ImageIndex = 1;
+                    driveNode.Nodes.Add(dirNode);
+                }
+                
+
+            }
+            catch (Exception ex) { }
+        }
+        private void treeView1_BeforeExpand(object sender, TreeViewCancelEventArgs e)
         {
             e.Node.Nodes.Clear();
             string[] dirs;
@@ -91,119 +145,34 @@ namespace FileManager
                         lvi.Text = file.Remove(0, file.LastIndexOf('\\') + 1);
                         // установка названия файла
                         string ext = Path.GetExtension(file);
-                        if (ext ==".pdf")
+                        if (ext == ".pdf")
                         {
                             lvi.ImageIndex = 1;
-                        } else if (ext == ".png" || ext ==".JPG" || ext == ".mp4" || ext== ".jpg")
+                        }
+                        else if (ext == ".png" || ext == ".JPG" || ext == ".mp4" || ext == ".jpg" || ext == ".MOV")
                         {
                             lvi.ImageIndex = 5;
-                        } else if (ext == ".xls" || ext == ".csv" || ext == ".xlsx" )
+                        }
+                        else if (ext == ".xls" || ext == ".csv" || ext == ".xlsx")
                         {
                             lvi.ImageIndex = 3;
+                        } else if (ext == ".doc" || ext == ".docx" || ext == ".txt" || ext == ".rtf")
+                        {
+                            lvi.ImageIndex = 4;
+                        } else if(ext ==".json")
+                        {
+                            lvi.ImageIndex = 6;
+                        } else
+                        {
+                            lvi.ImageIndex = 7;
                         }
-
-                        // установка картинки для файла
-                        // добавляем элемент в ListView
                         ScreenFile.Items.Add(lvi);
                     }
-                    //dirs = Directory.GetFiles(e.Node.FullPath);
-                    //if (dirs.Length != 0)
-                    //{
-                    //    for (int i = 0; i < dirs.Length; i++)
-                    //    {
-                    //        TreeNode dirNode = new TreeNode(new DirectoryInfo(dirs[i]).Name);
-                    //        dirNode.ImageIndex = 1;
-                    //        FillTreeNode(dirNode, dirs[i]);
-                    //        e.Node.Nodes.Add(dirNode);
-                    //    }
-                    //}
                     textBox1.Text = e.Node.FullPath;
                 }
             }
             catch (Exception ex) { }
         }
-        //событие перед выделением узла
-        //void treeView1_BeforeSelect(object sender, TreeViewCancelEventArgs e)
-        //{
-        //    e.Node.Nodes.Clear();
-        //    string[] dirs;
-        //    try
-        //    {
-        //        if (Directory.Exists(e.Node.FullPath))
-        //        {
-        //            dirs = Directory.GetDirectories(e.Node.FullPath);
-        //            if (dirs.Length != 0)
-        //            {
-        //                for (int i = 0; i < dirs.Length; i++)
-        //                {
-
-        //                    TreeNode dirNode = new TreeNode(new DirectoryInfo(dirs[i]).Name);
-        //                    dirNode.ImageIndex = 2;
-        //                    FillTreeNode(dirNode, dirs[i]);
-        //                    e.Node.Nodes.Add(dirNode);
-        //                }
-        //            }
-        //        }
-        //    }
-        //    catch (Exception ex) { }
-        //}
-        private void FillDriveNodes()
-        {
-            try
-            {
-                
-                foreach (DriveInfo drive in DriveInfo.GetDrives())
-                {
-                    TreeNode driveNode = new TreeNode { Text = drive.Name };
-                    driveNode.ImageIndex = 2;
-                    FillTreeNode(driveNode, drive.Name);
-                    
-                    FirstTree.Nodes.Add(driveNode);
-                }
-            }
-            catch (Exception ex) { }
-        }
-        private void FillComboBox()
-        {
-
-            try
-            {
-
-                foreach (DriveInfo drive in DriveInfo.GetDrives())
-                {
-                    comboBox1.Items.Add(drive.Name);
-                    
-                }
-            }
-            catch (Exception ex) { }
-        }
-        private void FillTreeNode(TreeNode driveNode, string path)
-        {
-            try
-            {
-                
-                string[] dirs = Directory.GetDirectories(path);
-                foreach (string dir in dirs)
-                {
-                    TreeNode dirNode = new TreeNode();
-                    dirNode.Text = dir.Remove(0, dir.LastIndexOf("\\") + 1);
-                    dirNode.ImageIndex = 0;
-                    driveNode.Nodes.Add(dirNode);
-                }
-                string[] files = Directory.GetFiles(path);
-                foreach (string fl in files)
-                {
-                    TreeNode dirNode = new TreeNode();
-                    dirNode.Text = fl.Remove(0, fl.LastIndexOf("\\") + 1);
-                    dirNode.ImageIndex = 1;
-                    driveNode.Nodes.Add(dirNode);
-                }
-                
-
-            }
-            catch (Exception ex) { }
-        }
-
         private void OpenSelectedFile(object sender, EventArgs e)
         {
             Process.Start(FirstTree.SelectedNode.FullPath);
@@ -229,5 +198,19 @@ namespace FileManager
             pr.Show();
         }
 
+        private void RenameFile(object sender, EventArgs e)
+        {
+            string path = FirstTree.SelectedNode.FullPath;
+            DirectoryInfo directory = new DirectoryInfo(path);
+            FormForRenaming fr = new FormForRenaming();
+            fr.ShowDialog();
+            string newpath = FirstTree.SelectedNode.FullPath.Substring(0, path.Length - directory.Name.Length)+takepath;
+            Directory.Move(FirstTree.SelectedNode.FullPath, newpath);
+        }
+        static string takepath;
+        public void TakeString(string a)
+        {
+            takepath = a;
+        }
     }
 }

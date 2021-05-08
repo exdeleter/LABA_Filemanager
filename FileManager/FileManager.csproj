@@ -52,6 +52,12 @@
     <Compile Include="File Commander.Designer.cs">
       <DependentUpon>File Commander.cs</DependentUpon>
     </Compile>
+    <Compile Include="FormForRenaming.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormForRenaming.Designer.cs">
+      <DependentUpon>FormForRenaming.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PropertyOfFile.cs">
@@ -62,6 +68,9 @@
     </Compile>
     <EmbeddedResource Include="File Commander.resx">
       <DependentUpon>File Commander.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormForRenaming.resx">
+      <DependentUpon>FormForRenaming.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

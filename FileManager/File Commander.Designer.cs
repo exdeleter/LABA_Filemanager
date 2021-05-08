@@ -44,6 +44,8 @@ namespace FileManager
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripMenuItem4 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripMenuItem7 = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripMenuItem6 = new System.Windows.Forms.ToolStripMenuItem();
             this.ScreenFile = new System.Windows.Forms.ListView();
             this.comboBox2 = new System.Windows.Forms.ComboBox();
@@ -83,7 +85,7 @@ namespace FileManager
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(270, 4);
+            this.button1.Location = new System.Drawing.Point(270, 5);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(60, 23);
             this.button1.TabIndex = 4;
@@ -92,15 +94,15 @@ namespace FileManager
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(104, 4);
+            this.textBox1.Location = new System.Drawing.Point(104, 5);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(165, 23);
+            this.textBox1.Size = new System.Drawing.Size(160, 23);
             this.textBox1.TabIndex = 2;
             // 
             // comboBox1
             // 
             this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(3, 3);
+            this.comboBox1.Location = new System.Drawing.Point(3, 5);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(95, 23);
             this.comboBox1.TabIndex = 1;
@@ -129,55 +131,69 @@ namespace FileManager
             this.toolStripSeparator1,
             this.toolStripMenuItem4,
             this.toolStripSeparator2,
+            this.toolStripMenuItem7,
+            this.toolStripSeparator3,
             this.toolStripMenuItem6});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(178, 160);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(191, 190);
             // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(177, 24);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(190, 24);
             this.toolStripMenuItem1.Text = "Копировать";
             // 
             // toolStripMenuItem2
             // 
             this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.Size = new System.Drawing.Size(177, 24);
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(190, 24);
             this.toolStripMenuItem2.Text = "Вставить";
             // 
             // toolStripMenuItem3
             // 
             this.toolStripMenuItem3.Name = "toolStripMenuItem3";
-            this.toolStripMenuItem3.Size = new System.Drawing.Size(177, 24);
+            this.toolStripMenuItem3.Size = new System.Drawing.Size(190, 24);
             this.toolStripMenuItem3.Text = "Сжать";
             // 
             // toolStripMenuItem5
             // 
             this.toolStripMenuItem5.Name = "toolStripMenuItem5";
-            this.toolStripMenuItem5.Size = new System.Drawing.Size(177, 24);
+            this.toolStripMenuItem5.Size = new System.Drawing.Size(190, 24);
             this.toolStripMenuItem5.Text = "Создать папку";
             this.toolStripMenuItem5.Click += new System.EventHandler(this.CreateDirectory);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(174, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(187, 6);
             // 
             // toolStripMenuItem4
             // 
             this.toolStripMenuItem4.Name = "toolStripMenuItem4";
-            this.toolStripMenuItem4.Size = new System.Drawing.Size(177, 24);
+            this.toolStripMenuItem4.Size = new System.Drawing.Size(190, 24);
             this.toolStripMenuItem4.Text = "Удалить";
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(174, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(187, 6);
+            // 
+            // toolStripMenuItem7
+            // 
+            this.toolStripMenuItem7.Name = "toolStripMenuItem7";
+            this.toolStripMenuItem7.Size = new System.Drawing.Size(190, 24);
+            this.toolStripMenuItem7.Text = "Переименовать";
+            this.toolStripMenuItem7.Click += new System.EventHandler(this.RenameFile);
+            // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(187, 6);
             // 
             // toolStripMenuItem6
             // 
             this.toolStripMenuItem6.Name = "toolStripMenuItem6";
-            this.toolStripMenuItem6.Size = new System.Drawing.Size(177, 24);
+            this.toolStripMenuItem6.Size = new System.Drawing.Size(190, 24);
             this.toolStripMenuItem6.Text = "Свойства";
             this.toolStripMenuItem6.Click += new System.EventHandler(this.OpenProperty);
             // 
@@ -271,6 +287,8 @@ namespace FileManager
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem6;
         private System.Windows.Forms.ListView ScreenFile;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem7;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
     }
 }
 
