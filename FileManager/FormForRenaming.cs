@@ -20,7 +20,7 @@ namespace FileManager
         private void FinallyRename(object sender, EventArgs e)
         {
             FileComm fr = new FileComm();
-            fr.TakeString(textBox1.Text);
+            fr.TakeNewName(textBox1.Text);
             this.Close();
         }
     }

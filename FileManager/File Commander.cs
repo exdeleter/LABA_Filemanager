@@ -25,8 +25,20 @@ namespace FileManager
 {
     public partial class FileComm : Form
     {
-       
-        
+
+        private int sizeIcons = 32;
+        public int SizeIcons
+        {
+            get
+            {
+                return sizeIcons;
+            }
+            set
+            {
+                sizeIcons = value;
+            }
+
+        }
         public FileComm()
         {
             InitializeComponent();
@@ -37,7 +49,7 @@ namespace FileManager
         {
             FillPic();
             //treeView1.BeforeSelect += treeView1_BeforeSelect;
-            FirstTree.BeforeExpand += treeView1_BeforeExpand;
+            TreeDirectories.BeforeExpand += treeView1_BeforeExpand;
             // заполняем дерево дисками
             FillDriveNodes();
             FillComboBox();
@@ -62,8 +74,8 @@ namespace FileManager
             imageList1.Images.Add(bmp6);
             Bitmap bmp7 = new Bitmap("Resources\\question.ico");
             imageList1.Images.Add(bmp7);
-            imageList1.ImageSize = new Size(32, 32);
-            FirstTree.ImageList = imageList1;
+            imageList1.ImageSize = new Size(this.SizeIcons, this.SizeIcons);
+            TreeDirectories.ImageList = imageList1;
             ScreenFile.LargeImageList = imageList1;
         }
         private void FillDriveNodes()
@@ -77,7 +89,7 @@ namespace FileManager
                     driveNode.ImageIndex = 2;
                     FillTreeNode(driveNode, drive.Name);
                     
-                    FirstTree.Nodes.Add(driveNode);
+                    TreeDirectories.Nodes.Add(driveNode);
                 }
             }
             catch (Exception ex) { }
@@ -173,17 +185,24 @@ namespace FileManager
             }
             catch (Exception ex) { }
         }
-        private void OpenSelectedFile(object sender, EventArgs e)
+        private void OpenSelectedDirectories(object sender, EventArgs e)
         {
-            Process.Start(FirstTree.SelectedNode.FullPath);
+            Process.Start(TreeDirectories.SelectedNode.FullPath);
         }
+        private void OpenSelectedFiles(object sender, EventArgs e)
+        {
+            //_ = ScreenFile.FocusedItem.Text;
 
+
+            string path = TreeDirectories.SelectedNode.FullPath + "\\"+ScreenFile.FocusedItem.Text;
+            Process.Start(path);
+        }
         private void CreateDirectory(object sender, EventArgs e)
         {
-            string path = FirstTree.SelectedNode.FullPath + @"\Новая папка";
+            string path = TreeDirectories.SelectedNode.FullPath + @"\Новая папка";
             if (Directory.Exists(path))
             {
-                MessageBox.Show("Эта папка уже существует", "Создание файла", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Эта папка уже существует", "Создание папки", MessageBoxButtons.OK, MessageBoxIcon.Error);
             } else
             {
                 Directory.CreateDirectory(path);
@@ -194,23 +213,70 @@ namespace FileManager
 
         private void OpenProperty(object sender, EventArgs e)
         {
-            PropertyOfFile pr = new PropertyOfFile(FirstTree.SelectedNode);
+            PropertyOfFile pr = new PropertyOfFile(TreeDirectories.SelectedNode);
             pr.Show();
         }
 
         private void RenameFile(object sender, EventArgs e)
         {
-            string path = FirstTree.SelectedNode.FullPath;
+            string path = TreeDirectories.SelectedNode.FullPath;
             DirectoryInfo directory = new DirectoryInfo(path);
             FormForRenaming fr = new FormForRenaming();
             fr.ShowDialog();
-            string newpath = FirstTree.SelectedNode.FullPath.Substring(0, path.Length - directory.Name.Length)+takepath;
-            Directory.Move(FirstTree.SelectedNode.FullPath, newpath);
+            string newpath = TreeDirectories.SelectedNode.FullPath.Substring(0, path.Length - directory.Name.Length)+newname;
+            Directory.Move(TreeDirectories.SelectedNode.FullPath, newpath);
         }
-        static string takepath;
-        public void TakeString(string a)
+        static string newname;
+        public void TakeNewName(string a)
         {
-            takepath = a;
+             newname = a;
+        }
+
+        private void Navigate(object sender, EventArgs e)
+        {
+            try
+            {
+                if (Directory.Exists(textBox1.Text))
+                {
+                    ScreenFile.Items.Clear();
+                    string[] files = Directory.GetFiles(textBox1.Text);
+                    // перебор полученных файлов
+                    foreach (string file in files)
+                    {
+
+                        ListViewItem lvi = new ListViewItem();
+                        lvi.Text = file.Remove(0, file.LastIndexOf('\\') + 1);
+                        // установка названия файла
+                        string ext = Path.GetExtension(file);
+                        if (ext == ".pdf")
+                        {
+                            lvi.ImageIndex = 1;
+                        }
+                        else if (ext == ".png" || ext == ".JPG" || ext == ".mp4" || ext == ".jpg" || ext == ".MOV")
+                        {
+                            lvi.ImageIndex = 5;
+                        }
+                        else if (ext == ".xls" || ext == ".csv" || ext == ".xlsx")
+                        {
+                            lvi.ImageIndex = 3;
+                        }
+                        else if (ext == ".doc" || ext == ".docx" || ext == ".txt" || ext == ".rtf")
+                        {
+                            lvi.ImageIndex = 4;
+                        }
+                        else if (ext == ".json")
+                        {
+                            lvi.ImageIndex = 6;
+                        }
+                        else
+                        {
+                            lvi.ImageIndex = 7;
+                        }
+                        ScreenFile.Items.Add(lvi);
+                    }
+                }
+            }
+            catch (Exception ex) { }
         }
     }
 }
