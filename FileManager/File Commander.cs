@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Ionic.Zip;
+
 //Окно состоит из двух частей (аналог TotalComander), в каждой части отображается список файлов и каталогов выбранной директории. Навигация по каталогам в каждой половине происходить независимо от другой половины. 
 //Для двух частей есть общая панель инструментов: создать файл, создать директорию, удалить, скопировать, переименовать. В каждой части наверху отображается адресная строка, содержащая полный путь к текущей директории.
 //При двойном щелчке на имени каталога, происходит открытие содержимого этого каталога. При двойном щелчке на имени файла, происходит открытие этого файла (???).
@@ -25,7 +23,8 @@ namespace FileManager
 {
     public partial class FileComm : Form
     {
-
+        static ImageList imageList1 = new ImageList();
+        static string newname;
         private int sizeIcons = 32;
         public int SizeIcons
         {
@@ -43,7 +42,7 @@ namespace FileManager
         {
             InitializeComponent();
             Initialization();
-            
+
         }
         private void Initialization()
         {
@@ -56,8 +55,6 @@ namespace FileManager
         }
         private void FillPic()
         {
-            
-            ImageList imageList1 = new ImageList();
             Bitmap bmp = new Bitmap("Resources\\folder.ico");
             imageList1.Images.Add(bmp);
             Bitmap bmp1 = new Bitmap("Resources\\pdf.ico");
@@ -82,13 +79,12 @@ namespace FileManager
         {
             try
             {
-                
+
                 foreach (DriveInfo drive in DriveInfo.GetDrives())
                 {
                     TreeNode driveNode = new TreeNode { Text = drive.Name };
                     driveNode.ImageIndex = 2;
                     FillTreeNode(driveNode, drive.Name);
-                    
                     TreeDirectories.Nodes.Add(driveNode);
                 }
             }
@@ -98,7 +94,7 @@ namespace FileManager
         {
             foreach (DriveInfo drive in DriveInfo.GetDrives())
             {
-                comboBox1.Items.Add(drive.Name);
+                Disks.Items.Add(drive.Name);
 
             }
         }
@@ -106,7 +102,7 @@ namespace FileManager
         {
             try
             {
-                
+
                 string[] dirs = Directory.GetDirectories(path);
                 foreach (string dir in dirs)
                 {
@@ -123,10 +119,38 @@ namespace FileManager
                     dirNode.ImageIndex = 1;
                     driveNode.Nodes.Add(dirNode);
                 }
-                
+
 
             }
             catch (Exception ex) { }
+        }
+        private int ExtensionsFile(string file)
+        {
+            string ext = Path.GetExtension(file);
+            if (ext == ".pdf")
+            {
+                return 1;
+            }
+            else if (ext == ".png" || ext == ".JPG" || ext == ".mp4" || ext == ".jpg" || ext == ".MOV")
+            {
+                return 5;
+            }
+            else if (ext == ".xls" || ext == ".csv" || ext == ".xlsx")
+            {
+                return 3;
+            }
+            else if (ext == ".doc" || ext == ".docx" || ext == ".txt" || ext == ".rtf")
+            {
+                return 4;
+            }
+            else if (ext == ".json")
+            {
+                return 6;
+            }
+            else
+            {
+                return 7;
+            }
         }
         private void treeView1_BeforeExpand(object sender, TreeViewCancelEventArgs e)
         {
@@ -136,7 +160,7 @@ namespace FileManager
             {
                 if (Directory.Exists(e.Node.FullPath))
                 {
-                    comboBox1.SelectedIndex = 0;
+                    Disks.SelectedIndex = 0;
                     dirs = Directory.GetDirectories(e.Node.FullPath);
                     if (dirs.Length != 0)
                     {
@@ -149,66 +173,46 @@ namespace FileManager
                     }
                     string[] files = Directory.GetFiles(e.Node.FullPath);
                     ScreenFile.Items.Clear();
-                    // перебор полученных файлов
                     foreach (string file in files)
                     {
 
                         ListViewItem lvi = new ListViewItem();
                         lvi.Text = file.Remove(0, file.LastIndexOf('\\') + 1);
-                        // установка названия файла
-                        string ext = Path.GetExtension(file);
-                        if (ext == ".pdf")
-                        {
-                            lvi.ImageIndex = 1;
-                        }
-                        else if (ext == ".png" || ext == ".JPG" || ext == ".mp4" || ext == ".jpg" || ext == ".MOV")
-                        {
-                            lvi.ImageIndex = 5;
-                        }
-                        else if (ext == ".xls" || ext == ".csv" || ext == ".xlsx")
-                        {
-                            lvi.ImageIndex = 3;
-                        } else if (ext == ".doc" || ext == ".docx" || ext == ".txt" || ext == ".rtf")
-                        {
-                            lvi.ImageIndex = 4;
-                        } else if(ext ==".json")
-                        {
-                            lvi.ImageIndex = 6;
-                        } else
-                        {
-                            lvi.ImageIndex = 7;
-                        }
+                        lvi.ImageIndex = ExtensionsFile(file);
                         ScreenFile.Items.Add(lvi);
                     }
                     textBox1.Text = e.Node.FullPath;
+                    AddresLine.Text = e.Node.FullPath;
                 }
             }
             catch (Exception ex) { }
         }
-        private void OpenSelectedDirectories(object sender, EventArgs e)
-        {
-            Process.Start(TreeDirectories.SelectedNode.FullPath);
-        }
         private void OpenSelectedFiles(object sender, EventArgs e)
         {
-            //_ = ScreenFile.FocusedItem.Text;
+            try
+            {
+                Process.Start(AddresLine.Text);
 
-
-            string path = TreeDirectories.SelectedNode.FullPath + "\\"+ScreenFile.FocusedItem.Text;
-            Process.Start(path);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Выберите папку, из которой вы хотите открыть файл", "Открытие файла", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
         }
         private void CreateDirectory(object sender, EventArgs e)
         {
+
             string path = TreeDirectories.SelectedNode.FullPath + @"\Новая папка";
             if (Directory.Exists(path))
             {
                 MessageBox.Show("Эта папка уже существует", "Создание папки", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            } else
+            }
+            else
             {
                 Directory.CreateDirectory(path);
-                
+                TreeDirectories.SelectedNode.Nodes.Add("Новая папка");
+
             }
-           
         }
 
         private void OpenProperty(object sender, EventArgs e)
@@ -223,13 +227,14 @@ namespace FileManager
             DirectoryInfo directory = new DirectoryInfo(path);
             FormForRenaming fr = new FormForRenaming();
             fr.ShowDialog();
-            string newpath = TreeDirectories.SelectedNode.FullPath.Substring(0, path.Length - directory.Name.Length)+newname;
+            string newpath = TreeDirectories.SelectedNode.FullPath.Substring(0, path.Length - directory.Name.Length) + newname;
             Directory.Move(TreeDirectories.SelectedNode.FullPath, newpath);
+            newname = String.Empty;
         }
-        static string newname;
+
         public void TakeNewName(string a)
         {
-             newname = a;
+            newname = a;
         }
 
         private void Navigate(object sender, EventArgs e)
@@ -247,36 +252,319 @@ namespace FileManager
                         ListViewItem lvi = new ListViewItem();
                         lvi.Text = file.Remove(0, file.LastIndexOf('\\') + 1);
                         // установка названия файла
-                        string ext = Path.GetExtension(file);
-                        if (ext == ".pdf")
-                        {
-                            lvi.ImageIndex = 1;
-                        }
-                        else if (ext == ".png" || ext == ".JPG" || ext == ".mp4" || ext == ".jpg" || ext == ".MOV")
-                        {
-                            lvi.ImageIndex = 5;
-                        }
-                        else if (ext == ".xls" || ext == ".csv" || ext == ".xlsx")
-                        {
-                            lvi.ImageIndex = 3;
-                        }
-                        else if (ext == ".doc" || ext == ".docx" || ext == ".txt" || ext == ".rtf")
-                        {
-                            lvi.ImageIndex = 4;
-                        }
-                        else if (ext == ".json")
-                        {
-                            lvi.ImageIndex = 6;
-                        }
-                        else
-                        {
-                            lvi.ImageIndex = 7;
-                        }
+                        lvi.ImageIndex = ExtensionsFile(file);
                         ScreenFile.Items.Add(lvi);
                     }
                 }
             }
             catch (Exception ex) { }
         }
+        private void DeleteDirectory(object sender, EventArgs e)
+        {
+            try
+            {
+                DialogResult result = MessageBox.Show("Вы уверены, что хотите удалить папку?", "Удаление папки", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                if (result == DialogResult.Yes)
+                {
+                    string path = TreeDirectories.SelectedNode.FullPath;
+                    Directory.Delete(path, true);
+                    TreeDirectories.SelectedNode.Remove();
+
+                }
+                else
+                {
+                    return;
+                }
+
+
+            }
+            catch (DirectoryNotFoundException ex)
+            {
+                MessageBox.Show("Директория не найдена. Ошибка: " + ex.Message, "Ошибка при удалении", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                MessageBox.Show("Отсутствует доступ. Ошибка: " + ex.Message, "Ошибка при удалении", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Произошла ошибка: " + ex.Message, "Ошибка при удалении", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void FocusFile(object sender, EventArgs e)
+        {
+            AddresLine.Text = TreeDirectories.SelectedNode.FullPath + "\\" + ScreenFile.FocusedItem.Text;
+        }
+
+        private void SizeChange(object sender, EventArgs e)
+        {
+            //Bitmap bmp = new Bitmap("Resources\\folder.ico");
+            //imageList1.Images.Add(bmp);
+            //Bitmap bmp1 = new Bitmap("Resources\\pdf.ico");
+            //imageList1.Images.Add(bmp1);
+            //Bitmap bmp2 = new Bitmap("Resources\\disk.ico");
+            //imageList1.Images.Add(bmp2);
+            //Bitmap bmp3 = new Bitmap("Resources\\excel.ico");
+            //imageList1.Images.Add(bmp3);
+            //Bitmap bmp4 = new Bitmap("Resources\\word.ico");
+            //imageList1.Images.Add(bmp4);
+            //Bitmap bmp5 = new Bitmap("Resources\\image.ico");
+            //imageList1.Images.Add(bmp5);
+            //Bitmap bmp6 = new Bitmap("Resources\\json.ico");
+            //imageList1.Images.Add(bmp6);
+            //Bitmap bmp7 = new Bitmap("Resources\\question.ico");
+            //imageList1.Images.Add(bmp7);
+            //sizeIcons = int.Parse(toolStripComboBox1.SelectedItem.ToString());
+            //imageList1.ImageSize = new Size(sizeIcons, sizeIcons);
+            //TreeDirectories.ImageList = imageList1;
+            //ScreenFile.LargeImageList = imageList1;
+
+        }
+
+        private void черныйToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            TreeDirectories.BackColor = Color.Black;
+            TreeDirectories.ForeColor = Color.White;
+            ScreenFile.BackColor = Color.Black;
+            ScreenFile.ForeColor = Color.White;
+            this.ForeColor = Color.White;
+            this.BackColor = Color.Black;
+            menuStrip1.BackColor = Color.Black;
+            menuStrip1.ForeColor = Color.White;
+        }
+
+        private void белыйToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            TreeDirectories.BackColor = Color.White;
+            TreeDirectories.ForeColor = Color.Black;
+            ScreenFile.BackColor = Color.White;
+            ScreenFile.ForeColor = Color.Black;
+            this.ForeColor = Color.Black;
+            this.BackColor = Color.White;
+            menuStrip1.BackColor = Color.White;
+            menuStrip1.ForeColor = Color.Black;
+        }
+
+        private void синийToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            TreeDirectories.BackColor = Color.Blue;
+            ScreenFile.BackColor = Color.Blue;
+            this.BackColor = Color.Blue;
+            menuStrip1.BackColor = Color.Blue;
+        }
+
+        private void красныйToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            TreeDirectories.BackColor = Color.Red;
+            ScreenFile.BackColor = Color.Red;
+            this.BackColor = Color.Red;
+            menuStrip1.BackColor = Color.Red;
+        }
+
+        private void NavigateEnter(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                try
+                {
+                    if (Directory.Exists(AddresLine.Text))
+                    {
+                        ScreenFile.Items.Clear();
+                        string[] files = Directory.GetFiles(AddresLine.Text);
+                        // перебор полученных файлов
+                        foreach (string file in files)
+                        {
+
+                            ListViewItem lvi = new ListViewItem();
+                            lvi.Text = file.Remove(0, file.LastIndexOf('\\') + 1);
+                            // установка названия файла
+                            lvi.ImageIndex = ExtensionsFile(file);
+                            ScreenFile.Items.Add(lvi);
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show("Данной папки нет", "Навигация", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+                catch (Exception ex) { }
+            }
+        }
+
+        private async void CompressAsync(object sender, EventArgs e)
+        {
+            try
+            {
+                using (ZipFile zip = new ZipFile())
+                {
+                    zip.AlternateEncodingUsage = ZipOption.Always;
+                    zip.AlternateEncoding = Encoding.GetEncoding(866);
+                    string path = TreeDirectories.SelectedNode.FullPath;// + "\\" + ScreenFile.FocusedItem.Text;
+                    string[] files = Directory.GetFiles(path);
+                    string[] dirs = Directory.GetDirectories(path);
+                    foreach (string dir in dirs)
+                    {
+                        if (Directory.Exists(path))
+                        {
+                            await Task.Run(() => zip.AddDirectory(dir, ""));
+                        }
+                        //else
+                        //{
+                        //    await Task.Run(() => zip.AddDirectory(path, ""));
+                        //}
+                    }
+                    //// перебор полученных файлов
+                    foreach (string file in files)
+                    {
+                        if (File.Exists(file))
+                        {
+                            await Task.Run(() => zip.AddFile(file, ""));
+                        }
+                        //else
+                        //{
+                        //    await Task.Run(() => zip.AddDirectory(path, ""));
+                        //}
+                    }
+                    FormForRenaming fr = new FormForRenaming(zip, path);
+                    fr.Show();
+                }
+            }
+            catch (Exception ex)
+            { }
+        }
+
+        private void DeleteFIle(object sender, EventArgs e)
+        {
+            try
+            {
+                DialogResult result = MessageBox.Show("Вы уверены, что хотите удалить файл?", "Удаление файла", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                if (result == DialogResult.Yes)
+                {
+                    string path = TreeDirectories.SelectedNode.FullPath + "\\"+ScreenFile.FocusedItem.Text;
+                    File.Delete(path); 
+                    ScreenFile.FocusedItem.Remove();
+
+                }
+                else
+                {
+                    return;
+                }
+
+
+            }
+            catch (DirectoryNotFoundException ex)
+            {
+                MessageBox.Show("Директория не найдена. Ошибка: " + ex.Message, "Ошибка при удалении", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                MessageBox.Show("Отсутствует доступ. Ошибка: " + ex.Message, "Ошибка при удалении", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Произошла ошибка: " + ex.Message, "Ошибка при удалении", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
+        }
     }
 }
+
+        /*
+private void OpenDiskFromCB(object sender, KeyEventArgs e)
+{
+//try
+//{
+//    if (e.KeyCode == Keys.Enter)
+//    {
+//        TreeDirectories.Nodes.Clear();
+//        string[] dirs = Directory.GetDirectories(Disks.SelectedItem.ToString());
+//        foreach (string dir in dirs)
+//        {
+//            TreeNode dirNode = new TreeNode();
+//            dirNode.Text = dir.Remove(0, dir.LastIndexOf("\\") + 1);
+//            dirNode.ImageIndex = 0;
+//            TreeDirectories.Nodes.Add(dirNode);
+//            //driveNode.Nodes.Add(dirNode);
+//        }
+//        string[] files = Directory.GetFiles(Disks.SelectedItem.ToString());
+//        foreach (string fl in files)
+//        {
+//            TreeNode dirNode = new TreeNode();
+//            dirNode.Text = fl.Remove(0, fl.LastIndexOf("\\") + 1);
+//            dirNode.ImageIndex = 1;
+//            TreeDirectories.Nodes.Add(dirNode);
+//            //driveNode.Nodes.Add(dirNode);
+//        }
+//    }
+
+//}
+//catch (Exception ex) { }
+//TreeDirectories.BeforeExpand += treeView1_BeforeExpand;
+// заполняем дерево дисками
+//FillDriveNodes();
+//FillComboBox();
+TreeDirectories.Nodes.Clear();
+string[] dirs;
+try
+{
+if (Directory.Exists(Disks.SelectedItem.ToString()))
+{
+Disks.SelectedIndex = 0;
+dirs = Directory.GetDirectories(Disks.SelectedItem.ToString());
+if (dirs.Length != 0)
+{
+for (int i = 0; i < dirs.Length; i++)
+{
+ TreeNode dirNode = new TreeNode(new DirectoryInfo(dirs[i]).Name);
+ FillTreeNode(dirNode, dirs[i]);
+ TreeDirectories.Nodes.Add(dirNode);
+ //e.Node.Nodes.Add(dirNode);
+}
+}
+string[] files = Directory.GetFiles(Disks.SelectedItem.ToString());
+ScreenFile.Items.Clear();
+// перебор полученных файлов
+foreach (string file in files)
+{
+
+ListViewItem lvi = new ListViewItem();
+lvi.Text = file.Remove(0, file.LastIndexOf('\\') + 1);
+// установка названия файла
+string ext = Path.GetExtension(file);
+if (ext == ".pdf")
+{
+ lvi.ImageIndex = 1;
+}
+else if (ext == ".png" || ext == ".JPG" || ext == ".mp4" || ext == ".jpg" || ext == ".MOV")
+{
+ lvi.ImageIndex = 5;
+}
+else if (ext == ".xls" || ext == ".csv" || ext == ".xlsx")
+{
+ lvi.ImageIndex = 3;
+}
+else if (ext == ".doc" || ext == ".docx" || ext == ".txt" || ext == ".rtf")
+{
+ lvi.ImageIndex = 4;
+}
+else if (ext == ".json")
+{
+ lvi.ImageIndex = 6;
+}
+else
+{
+ lvi.ImageIndex = 7;
+}
+ScreenFile.Items.Add(lvi);
+}
+//textBox1.Text = e.Node.FullPath;
+}
+}
+catch (Exception ex) { }
+}
+*/

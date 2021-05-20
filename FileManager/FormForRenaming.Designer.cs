@@ -33,6 +33,7 @@ namespace FileManager
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // textBox1
@@ -46,15 +47,15 @@ namespace FileManager
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label1.Location = new System.Drawing.Point(74, 23);
+            this.label1.Location = new System.Drawing.Point(116, 22);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(208, 24);
+            this.label1.Size = new System.Drawing.Size(106, 24);
             this.label1.TabIndex = 1;
-            this.label1.Text = "Новое имя для файла ";
+            this.label1.Text = "Новое имя";
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(118, 106);
+            this.button1.Location = new System.Drawing.Point(120, 106);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(90, 48);
             this.button1.TabIndex = 2;
@@ -62,17 +63,29 @@ namespace FileManager
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.FinallyRename);
             // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(120, 106);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(90, 48);
+            this.button2.TabIndex = 3;
+            this.button2.Text = "Сохранить";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Visible = false;
+            this.button2.Click += new System.EventHandler(this.FinallZip);
+            // 
             // FormForRenaming
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(352, 193);
+            this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.textBox1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FormForRenaming";
-            this.Text = "Rename folder";
+            this.Text = "Name";
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -83,5 +96,6 @@ namespace FileManager
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button button2;
     }
 }
