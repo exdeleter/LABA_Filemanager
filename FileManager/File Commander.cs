@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -181,7 +182,7 @@ namespace FileManager
                         lvi.ImageIndex = ExtensionsFile(file);
                         ScreenFile.Items.Add(lvi);
                     }
-                    textBox1.Text = e.Node.FullPath;
+                    PathTree.Text = e.Node.FullPath;
                     AddresLine.Text = e.Node.FullPath;
                 }
             }
@@ -217,7 +218,7 @@ namespace FileManager
 
         private void OpenProperty(object sender, EventArgs e)
         {
-            PropertyOfFile pr = new PropertyOfFile(TreeDirectories.SelectedNode);
+            PropertyOfFile pr = new PropertyOfFile(AddresLine.Text);
             pr.Show();
         }
 
@@ -241,10 +242,10 @@ namespace FileManager
         {
             try
             {
-                if (Directory.Exists(textBox1.Text))
+                if (Directory.Exists(PathTree.Text))
                 {
                     ScreenFile.Items.Clear();
-                    string[] files = Directory.GetFiles(textBox1.Text);
+                    string[] files = Directory.GetFiles(PathTree.Text);
                     // перебор полученных файлов
                     foreach (string file in files)
                     {
@@ -301,6 +302,9 @@ namespace FileManager
 
         private void SizeChange(object sender, EventArgs e)
         {
+            TreeDirectories.Font = new Font(TreeDirectories.Font.FontFamily, int.Parse(toolStripComboBox1.SelectedItem.ToString()));
+            ScreenFile.Font = new Font(ScreenFile.Font.FontFamily, int.Parse(toolStripComboBox1.SelectedItem.ToString()));
+
             //Bitmap bmp = new Bitmap("Resources\\folder.ico");
             //imageList1.Images.Add(bmp);
             //Bitmap bmp1 = new Bitmap("Resources\\pdf.ico");
@@ -317,10 +321,11 @@ namespace FileManager
             //imageList1.Images.Add(bmp6);
             //Bitmap bmp7 = new Bitmap("Resources\\question.ico");
             //imageList1.Images.Add(bmp7);
-            //sizeIcons = int.Parse(toolStripComboBox1.SelectedItem.ToString());
-            //imageList1.ImageSize = new Size(sizeIcons, sizeIcons);
-            //TreeDirectories.ImageList = imageList1;
-            //ScreenFile.LargeImageList = imageList1;
+            sizeIcons = int.Parse(toolStripComboBox1.SelectedItem.ToString());
+            imageList1.ImageSize = new Size(sizeIcons, sizeIcons);
+
+            TreeDirectories.ImageList = imageList1;
+            ScreenFile.LargeImageList = imageList1;
 
         }
 
@@ -402,7 +407,7 @@ namespace FileManager
                 {
                     zip.AlternateEncodingUsage = ZipOption.Always;
                     zip.AlternateEncoding = Encoding.GetEncoding(866);
-                    string path = TreeDirectories.SelectedNode.FullPath;// + "\\" + ScreenFile.FocusedItem.Text;
+                    string path = TreeDirectories.SelectedNode.FullPath;
                     string[] files = Directory.GetFiles(path);
                     string[] dirs = Directory.GetDirectories(path);
                     foreach (string dir in dirs)
@@ -411,10 +416,6 @@ namespace FileManager
                         {
                             await Task.Run(() => zip.AddDirectory(dir, ""));
                         }
-                        //else
-                        //{
-                        //    await Task.Run(() => zip.AddDirectory(path, ""));
-                        //}
                     }
                     //// перебор полученных файлов
                     foreach (string file in files)
@@ -423,10 +424,6 @@ namespace FileManager
                         {
                             await Task.Run(() => zip.AddFile(file, ""));
                         }
-                        //else
-                        //{
-                        //    await Task.Run(() => zip.AddDirectory(path, ""));
-                        //}
                     }
                     FormForRenaming fr = new FormForRenaming(zip, path);
                     fr.Show();
@@ -443,9 +440,20 @@ namespace FileManager
                 DialogResult result = MessageBox.Show("Вы уверены, что хотите удалить файл?", "Удаление файла", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                 if (result == DialogResult.Yes)
                 {
-                    string path = TreeDirectories.SelectedNode.FullPath + "\\"+ScreenFile.FocusedItem.Text;
-                    File.Delete(path); 
-                    ScreenFile.FocusedItem.Remove();
+                    if (ScreenFile.SelectedItems.Count != 0)
+                    {
+                        for (int i = 0; i < ScreenFile.SelectedItems.Count-1; i++)
+                        {
+                            File.Delete(PathTree.Text + "\\" + ScreenFile.SelectedItems[i].Text);
+                            ScreenFile.SelectedItems[i].Remove();
+
+                        }
+                    }
+                    else
+                    {
+                        File.Delete(AddresLine.Text);
+                        ScreenFile.FocusedItem.Remove();
+                    }
 
                 }
                 else
@@ -470,6 +478,97 @@ namespace FileManager
                 MessageBox.Show("Произошла ошибка: " + ex.Message, "Ошибка при удалении", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
+        }
+
+        private void CopyDirectories(object sender, EventArgs e)
+        {
+            
+            StringCollection paths = new StringCollection();
+            string path = TreeDirectories.SelectedNode.FullPath;
+            string[] files = Directory.GetFiles(path);
+            string[] dirs = Directory.GetDirectories(path);
+            foreach (string dir in dirs)
+            {
+                if (Directory.Exists(path))
+                {
+                    paths.Add(dir);
+                }
+            }
+            foreach (string file in files)
+            {
+                if (File.Exists(file))
+                {
+                    paths.Add(file);
+                }
+            }
+            Clipboard.SetFileDropList(paths);
+        }
+        private void CopyFiles(object sender, EventArgs e)
+        {
+            if(ScreenFile.SelectedItems.Count ==0)
+            {
+                return;
+            } else
+            {
+
+            StringCollection paths = new StringCollection();
+            if (ScreenFile.SelectedItems.Count!=1)
+            {
+                for (int i = 0; i < ScreenFile.SelectedItems.Count; i++)
+                {
+                    paths.Add(PathTree.Text+"\\"+ScreenFile.SelectedItems[i].Text);
+                }
+            }else
+            {
+                paths.Add(AddresLine.Text);
+            }
+            Clipboard.SetFileDropList(paths);
+            }
+        }
+        private async void PasteFiles(object sender, EventArgs e)
+        {
+            string dest = PathTree.Text;
+            StringCollection paths = new StringCollection();
+            paths = Clipboard.GetFileDropList();
+            foreach (var p in paths)
+            {
+                int r = p.LastIndexOf("\\");
+                await Task.Run(() => File.Copy(p, dest + "\\" + p.Substring(r)));
+            }
+        }
+        private async  void PasteDirectories(object sender, EventArgs e)
+        {
+            string dest = TreeDirectories.SelectedNode.FullPath;
+            StringCollection paths = new StringCollection();
+            paths = Clipboard.GetFileDropList();
+            foreach (var p in paths)
+            {
+                
+                string name = p.Substring(p.LastIndexOf("\\"));
+                if (File.Exists(p))
+                {
+                    await Task.Run(() => File.Copy(p, dest+name));
+                } 
+                else if (Directory.Exists(p))
+                {
+                    await DirectoryCopy(p, dest + name);
+                    //await Task.Run(() => Directory.C(p, dest + name));
+                }
+            }
+        }
+        private async Task DirectoryCopy(string src, string dstn)
+        {
+            DirectoryInfo srcDir = new DirectoryInfo(src);
+            DirectoryInfo dstnDir = new DirectoryInfo(dstn);
+            Directory.CreateDirectory(dstn);
+            foreach (DirectoryInfo dir in srcDir.GetDirectories())
+            {
+                await DirectoryCopy(dir.FullName, Path.Combine(dstn, dir.Name));
+            }
+            foreach (FileInfo file in srcDir.GetFiles())
+            {
+                await Task.Run(() => file.CopyTo(Path.Combine(dstnDir.FullName, file.Name), false));
+            }
         }
     }
 }

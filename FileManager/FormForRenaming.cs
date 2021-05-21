@@ -20,6 +20,7 @@ namespace FileManager
             button1.Visible = false;
             button2.Visible = true;
             this.zip = zip;
+            path = path.Substring(0, path.LastIndexOf("\\")+2);
             this.path = path;
 
         }
@@ -34,7 +35,7 @@ namespace FileManager
         {
             try
             {
-                this.zip.Save(textBox1.Text + ".zip");
+                this.zip.Save(path+textBox1.Text + ".zip");
             }
             catch
             {

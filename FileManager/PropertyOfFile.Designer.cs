@@ -33,6 +33,7 @@ namespace FileManager
             this.NameFIle = new System.Windows.Forms.TextBox();
             this.TypeOfFile = new System.Windows.Forms.Label();
             this.SizeOfFile = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // NameFIle
@@ -60,11 +61,21 @@ namespace FileManager
             this.SizeOfFile.TabIndex = 2;
             this.SizeOfFile.Text = "Размер файла ";
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(23, 191);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(108, 17);
+            this.label1.TabIndex = 3;
+            this.label1.Text = "Дата создания";
+            // 
             // PropertyOfFile
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(384, 450);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.SizeOfFile);
             this.Controls.Add(this.TypeOfFile);
             this.Controls.Add(this.NameFIle);
@@ -83,5 +94,6 @@ namespace FileManager
         private System.Windows.Forms.TextBox NameFIle;
         private System.Windows.Forms.Label TypeOfFile;
         private System.Windows.Forms.Label SizeOfFile;
+        private System.Windows.Forms.Label label1;
     }
 }

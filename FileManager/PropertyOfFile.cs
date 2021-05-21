@@ -13,15 +13,15 @@ namespace FileManager
 {
     public partial class PropertyOfFile : Form
     {
-        public PropertyOfFile(TreeNode tr)
+        public PropertyOfFile(string pathe)
         {
             InitializeComponent();
-            DirectoryInfo directory = new DirectoryInfo(tr.FullPath);
+            DirectoryInfo directory = new DirectoryInfo(pathe);
             this.Text = "Свойства: " + directory.Name;
             NameFIle.Text = directory.Name;
-            if (tr.FullPath == "C:\\")
+            if (pathe == "C:\\")
             {
-                DriveInfo driveInfo = new DriveInfo(tr.FullPath);
+                DriveInfo driveInfo = new DriveInfo(pathe);
                 TypeOfFile.Text = "Тип файла: \t Диск ";
                 double sizedisk = driveInfo.TotalSize;
                 double availablesizedisk = driveInfo.TotalFreeSpace;
@@ -31,7 +31,14 @@ namespace FileManager
             {
                 TypeOfFile.Text = "Тип папки: \t Папка";
                 SizeOfFile.Text = "Размер: " + Math.Round(((double)(DirSize(directory)/ 1000000.00)),2) + "МБ (" + DirSize(directory) + ") байт";
-            } 
+
+            } else
+            {
+                FileInfo fileInfo = new FileInfo(pathe);
+                TypeOfFile.Text = "Тип файла: \t" + $"{Path.GetExtension(pathe)}";
+                SizeOfFile.Text = "Размер: " + Math.Round(((double)(fileInfo.Length) / 1000000.00), 2) + "МБ (" + fileInfo.Length + ") байт";
+                label1.Text = "Дата создания: " + fileInfo.LastWriteTime;
+            }
         }
 
         public static long DirSize(DirectoryInfo d)
@@ -63,5 +70,6 @@ namespace FileManager
                 
             }
         }
+
     }
 }
