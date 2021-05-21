@@ -85,7 +85,7 @@ namespace FileManager
             this.Controls.Add(this.textBox1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FormForRenaming";
-            this.Text = "Name";
+            this.Text = "Новое имя ";
             this.ResumeLayout(false);
             this.PerformLayout();
 

@@ -13,7 +13,7 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
     <IsWebBootstrapper>false</IsWebBootstrapper>
-    <PublishUrl>publish\</PublishUrl>
+    <PublishUrl>C:\Users\dewaf\Desktop\УЧЕБА\УСТАНОВКА ФАЙЛОВОГО МЕНЕДЖЕРА\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
     <UpdateEnabled>false</UpdateEnabled>
@@ -23,10 +23,14 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
+    <ProductName>FileManager</ProductName>
+    <PublisherName>exdeleter</PublisherName>
+    <SuiteName>Programmer</SuiteName>
     <AutorunEnabled>true</AutorunEnabled>
-    <ApplicationRevision>2</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <ApplicationRevision>3</ApplicationRevision>
+    <ApplicationVersion>2.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
+    <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -50,7 +54,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>2D19A822C59FC852369A3615ECC1C489A8E40713</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>DBA07CA9EAB8B40F784A00AFEB47079A435D6A2F</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
     <ManifestKeyFile>FileManager_TemporaryKey.pfx</ManifestKeyFile>
@@ -60,6 +64,9 @@
   </PropertyGroup>
   <PropertyGroup>
     <SignManifests>true</SignManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Goescat-Macaron-File-manager.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Ionic.Zip, Version=1.9.1.8, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL">
@@ -84,6 +91,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DefaultDirectories.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DefaultDirectories.Designer.cs">
+      <DependentUpon>DefaultDirectories.cs</DependentUpon>
+    </Compile>
     <Compile Include="File Commander.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -104,6 +117,9 @@
     <Compile Include="PropertyOfFile.Designer.cs">
       <DependentUpon>PropertyOfFile.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="DefaultDirectories.resx">
+      <DependentUpon>DefaultDirectories.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="File Commander.resx">
       <DependentUpon>File Commander.cs</DependentUpon>
     </EmbeddedResource>
@@ -122,6 +138,7 @@
     <EmbeddedResource Include="PropertyOfFile.resx">
       <DependentUpon>PropertyOfFile.cs</DependentUpon>
     </EmbeddedResource>
+    <None Include="FileManager_TemporaryKey.pfx" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -137,9 +154,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <BootstrapperPackage Include=".NETFramework,Version=v4.7.2">
+    <BootstrapperPackage Include=".NETFramework,Version=v4.8">
       <Visible>False</Visible>
-      <ProductName>Microsoft .NET Framework 4.7.2 %28x86 and x64%29</ProductName>
+      <ProductName>Microsoft .NET Framework 4.8 %28x86 and x64%29</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
@@ -147,6 +164,9 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Goescat-Macaron-File-manager.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

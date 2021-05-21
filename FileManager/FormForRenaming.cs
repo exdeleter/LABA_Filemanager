@@ -39,7 +39,7 @@ namespace FileManager
             }
             catch
             {
-                MessageBox.Show("Tu oshibaewsya");
+                MessageBox.Show("Что - то пошло не так");
                 return;
             }
             this.Close();
